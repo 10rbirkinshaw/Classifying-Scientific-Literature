@@ -8,13 +8,13 @@ This project was completed as part of the General Assembly Data Science Immersiv
 - [Problem Statement](#problem-statement)<br>
 - [Goals](#goals)<br>
 - [Data](#data)<br>
-  - [Data Acquisition](#data-acquisition)<br>
-  - [Data Cleaning](#data-cleaning)<br>
-  - [EDA](#eda)<br>
+  - [Data Acquisition](##data-acquisition)<br>
+  - [Data Cleaning](##data-cleaning)<br>
+  - [EDA](##eda)<br>
 - [Approach to Modeling](#approach-to-modeling)<br>
 - [Modeling](#modeling)<br>
-  - [Results](#results)<br>
-  - [Evaluation](#evaluation)<br> 
+  - [Results](##results)<br>
+  - [Evaluation](##evaluation)<br> 
 - [Limitations](#limitations)<br>
 - [Conclusions](#conclusions)<br>
 - [Further Work](#further-work)<br>

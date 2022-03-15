@@ -32,7 +32,13 @@ What is the problem here? It is hard to get published as a scientist and the pro
 
 It can cost in the hundreds of pounds to have your article peer reviewed and then the more prestigious open access journals require payments in the thousands of dollars because they don’t make any money from subscriptions and the reward for research scientists is prestige. An exacerbating factor to this exists because of the way funding works: scientists need to write to grant bodies which provide the funding, and this results in quite heavy competition for funding.
 
-
+<br>
+<p align="center" width="100%">
+<kbd><img src="figures/peer-review-process.png" width="700"  /></kbd>
+</p>
+<p align="center"><i><sub><b>Figure 1:</b> The peer-review process, manuscripts can go around the loop many times only to be ultimately rejected.
+</sub></i></p>
+<br>
 
 # 3. Goals
 
@@ -47,11 +53,17 @@ I still wanted to build a tool that scientists could use to tailor their peer-re
 
 ## 4.1. Data Acquisition
 
-My data was sourced by web scraping https://pubmed.ncbi.nlm.nih.gov/. This site hosts a large database of scientific articles with a focus on medicine (and to a lesser extent, biology). I chose this site for a few reasons. Firstly, it was easy to scrape, I didn’t trigger any anti-scraping protocols and it was easily iterated through in a loop by simply incrementing an article number after the “.gov/” . Secondly, it had a lot of meta-information like tags and actually had the article abstract in plain text HTML instead of a picture, or slideshow which wasn’t possible to parse through.
+My data was sourced by web scraping [https://pubmed.ncbi.nlm.nih.gov/](https://pubmed.ncbi.nlm.nih.gov/35052025/). This site hosts a large database of scientific articles with a focus on medicine (and to a lesser extent, biology). I chose this site for a few reasons. Firstly, it was easy to scrape, I didn’t trigger any anti-scraping protocols and it was easily iterated through in a loop by simply incrementing an article number after the '.gov/' . Secondly, it had a lot of meta-information like tags and actually had the article abstract in plain text HTML instead of a picture, or slideshow which wasn’t possible to parse through.
 
 Just to touch on the features of a scientific article, abstracts can be thought of as summaries of the contents of a scientific article. There can be many authors and these people will be affiliated with academic institutions. 
 
-
+<br>
+<p align="center" width="100%">
+<kbd><img src="figures/article-screenshot.png" width="700"  /></kbd>
+</p>
+<p align="center"><i><sub><b>Figure 2:</b> Screenshot of a scientific article on PubMed.
+</sub></i></p>
+<br>
 
 The problem that caused me to shift my main goal was that there were far too many journals to be used as classes to predict - there were 10771 unique journals and so I needed to rethink my approach.
 
@@ -59,7 +71,13 @@ In order to approach this as a classification problem I needed to feature engine
 
 I still had severe class imbalance, I mentioned this database focussed on medicine and this really comes through in the data. We see medical articles comprise 55% of the dataset, with biology following at 25% and then there is a drop off.
 
-
+<br>
+<p align="center" width="100%">
+<kbd><img src="figures/catplot.png" width="700"  /></kbd>
+</p>
+<p align="center"><i><sub><b>Figure 3:</b> Plot showing the distribution of my feature-engineered labels. Label general_journal is a special case that is talked about below.
+</sub></i></p>
+<br>
 
 I attempted to deal with my class imbalance in a few ways. I attempted to use SMOTE to upsample minority classes, however I found that this ballooned the size of my dataset and resulted in models that took infeasible amounts of time to run. I also was running into memory issues. I therefore decided to run models on a few versions of the dataset:
 
@@ -70,13 +88,17 @@ I attempted to deal with my class imbalance in a few ways. I attempted to use SM
 
 These were ultimately all unfruitful in terms of achieving my specific goal(s), however the full data set appeared to generate the most successful models, thus this was the dataset I tried to optimize my models on.
 
-
-
 ## 4.2. Data Cleaning
 
 Significant amounts of text processing using regex was required in cleaning the web scraped data. I have given one example below but the associated project notebook details every instance that regex is used as well as notation for whatever the regular expression captures.
 
-
+<br>
+<p align="center" width="100%">
+<kbd><img src="figures/regex.png" width="700"  /></kbd>
+</p>
+<p align="center"><i><sub><b>Figure 4:</b> Code snippet showing a function that uses regex to clean cells in the tags column prior to TF-IDF vectorization.
+</sub></i></p>
+<br>
 
 Additional standard cleaning steps (e.g. backfilling missing values, dropping NAs etc.) were also undertaken and can be found in the project notebook file but do not warrant extended discussion.
 
@@ -84,20 +106,39 @@ Additional standard cleaning steps (e.g. backfilling missing values, dropping NA
 
 It was during the exploratory data analysis phase that I uncovered many of the problems with my dataset (i.e. too many unique labels, class imbalance once custom labels applied) so in this section I will focus only on the plots, but I will detail later the aspects of my approach that were influenced by what I discovered about the data during EDA because, to me, the way in which certain features of the data influence one’s approach is slightly more interesting and important than simply reporting those features.
 
-
+<br>
+<p align="center" width="100%">
+<kbd><img src="figures/wordlcouds.png" width="700"  /></kbd>
+</p>
+<p align="center"><i><sub><b>Figure 5:</b> Wordclouds showing the 100 most commonly occurring words in the abstracts of articles of different classes.
+</sub></i></p>
+<br>
 
 These wordclouds use the size of the word to show the relative frequency of the top 100 most commonly occurring words in the various classes and columns, hopefully it should be clear from these wordclouds that there is a difference in text when comparing the different scientific domains. I have also produced these wordclouds for the other text columns but for clarity I am only showing here the most common words in the abstract column.
-
-
 
 # 5. Approach to modeling
 
 The features I ended up using from my data were: Title, Abstract, Tags, Year of publication. I dummied the year which I extracted from the date column, as year was the only feature of date that was present in all data points. The other three predictors were text. This involved natural language processing or NLP, this involved vectorizing the text columns. I used TF-IDF vectorization as I wanted to account for the relative importance of words as well as the count (i.e. count vectorization, which I also tried implementing and performed worse than TF IDF vectorization).
-I would have liked to use author data as well as article type as predictors. For authors,t I was planning to use this to find the h-index of authors, which accounts for how much a researcher publishes and how much others use that work; it’s essentially an index of how good you are compared to your peers. This seemed like a really helpful predictor but conceptualizing the transformation of this feature of the data into a single feature (or uniform set of features across all rows) was incredibly difficult; no justification seemed to be without significant and obvious bias (against papers with lots of authors, for papers with one mentor and many students etc.) and I would be very open to ideas on how to use this data as a predictor of journal (or journal field).
-For article type it was a case that there weren’t enough articles that actually had put this information into the PubMed database.
+
+I would have liked to use author data as well as article type as predictors. For authors,t I was planning to use this to find the h-index of authors, which accounts for how much a researcher publishes and how much others use that work; it’s essentially an index of how good you are compared to your peers. This seemed like a really helpful predictor but conceptualizing the transformation of this feature of the data into a single feature (or uniform set of features across all rows) was incredibly difficult; no justification seemed to be without significant and obvious bias (against papers with lots of authors, for papers with one mentor and many students etc.) and I would be very open to ideas on how to use this data as a predictor of journal (or journal field). For article type it was a case that there weren’t enough articles that actually had put this information into the PubMed database.
+
+<br>
+<p align="center" width="100%">
+<kbd><img src="figures/article-types.png" width="700"  /></kbd>
+</p>
+<p align="center"><i><sub><b>Figure 6:</b> Counting the unique value in the 'article type' column reveals that this information is not contained in PubMed for most articles.
+</sub></i></p>
+<br>
 
 Ultimately the target labels I settled on were Medicine, Biology, Physics and Chemistry; this represents quite a reduction from over 10 thousand! As mentioned earlier, I have had to change the class label of one class originally termed ‘general_journal’. These are rather a special case because they had their own wiki list, they do publish non-specific scientific advancements, but almost all focus the minutiae of their activities on life sciences, which can be thought of basically as biology. I originally modeled on all 5 target labels but my first models were really overfitting on this category as you can see from this classification report.
 
+<br>
+<p align="center" width="100%">
+<kbd><img src="figures/classification-report.png" width="700"  /></kbd>
+</p>
+<p align="center"><i><sub><b>Figure 7:</b> Classification report from a model that included general_journal as a label.
+</sub></i></p>
+<br>
 
 # 6. Modeling
 
@@ -105,13 +146,21 @@ Ultimately the target labels I settled on were Medicine, Biology, Physics and Ch
 
 These are the models I ran on my data:
 
-Neighbors Classifier (K Nearest Neighbors)
-Linear model Classifier (Logistic Regression)
-Tree Classifier (Decision Tree Classifier)
-Bagging Classifier (Random Forest Classifier)
-Gradient-boosted Classifier (Gradient Boosting Classifier)
+* Neighbors Classifier (K Nearest Neighbors)
+* Linear model Classifier (Logistic Regression)
+* Tree Classifier (Decision Tree Classifier)
+* Bagging Classifier (Random Forest Classifier)
+* Gradient-boosted Classifier (Gradient Boosting Classifier)
+
 To reiterate: my specific goal was to be able to train a model that can predict an articles’ scientific domain accuracy higher than baseline. The baseline accuracy for my data set was 0.550 (to 3.s.f).
 
+<br>
+<p align="center" width="100%">
+<kbd><img src="figures/eval-metrics.png" width="700"  /></kbd>
+</p>
+<p align="center"><i><sub><b>Figure 8:</b> Showing some evaluation metrics obtained from classification models ran.
+</sub></i></p>
+<br>
 
 
 Overall my results were extremely disappointing. I tried fitting these models on the different versions of my data - the full data, the randomly downsampled subset and the subset with every class downsampled to the minority class. I ultimately found the best results when I was training on the whole dataset; I think this is because this data set captures the most variance in text nuance.
@@ -131,8 +180,6 @@ Concerning ensemble methods, for my bagging models, what is interesting is that 
 I then used gridsearch methods to setup a range of hyperparameters to iterate through in hopes of improving the accuracy of my logistic regression model; I recognise that this is somewhat of a redundant step given none of my models were able to achieve an accuracy higher than baseline, however it is important to undertake these steps of the ML pipeline as these are necessary steps to complete when a project is successful.
 
 
-
-
 ## 6.2. Evaluation
 
 Ultimately, gridsearch methods to tune hyperparameters for my best model resulted in an accuracy of 0.548 (to 3.s.f.). This model was still unable to achieve an accuracy higher than baseline (0.550).
@@ -143,11 +190,25 @@ I’d like to highlight three components of this:
 
 Below you can see the confusion matrix of my best mode. We can see that, essentially, the medicine class is just being predicted. We see some small correct predictions in other classes but it’s not close and my best model ended up predicting zero chemistry articles as chemistry.
 
-
+<br>
+<p align="center" width="100%">
+<kbd><img src="figures/confusion-matrix.png" width="700"  /></kbd>
+</p>
+<p align="center"><i><sub><b>Figure 9:</b> Confusion matrix of best logistic regression classification.
+</sub></i></p>
+<br>
 
 #### Coefficients 
 
 Below we can see the 10 most important features for two of the classes. We can see that year of publication has a quite pronounced effect in my best model - excluding this made models worse but the extent to which it uses the dummy variables associated with year, I suspect my best model is overfitting on this column.
+
+<br>
+<p align="center" width="100%">
+<kbd><img src="figures/coefficients.png" width="700"  /></kbd>
+</p>
+<p align="center"><i><sub><b>Figure 10:</b> Table of coefficients for two of the classes.
+</sub></i></p>
+<br>
 
 For this logistic regression, there were four lines plotted, one for each class; we have about 1400 coefficients for this, because this model used data that had had TF-IDF performed on the text columns to select the 800 most important words in the tags column, the 400 most important words in the abstract column, the 100 most important words in the tags column. Really what’s interesting is the prominence of medical words in non-medical categories, sometimes this is because it’s saying ‘these words existing in the datapoint reduce chances of being a blank, say, chemistry, journal, but the reason I’ve shown the tables instead of a plot is just to highlight the numbers of the coefficients: there is no obvious trend, they’re very low and no coefficient is orders of magnitude larger than any others, which would at least have been remarkable.
 
@@ -155,8 +216,13 @@ For this logistic regression, there were four lines plotted, one for each class;
 
 The precision-recall curves paint the same picture as the confusion matrix. The ROC curve below shows how classification changes as the threshold probability for prediction changes and then the precision recall curve shows how precision and recall change. In a multi-class classification setup, micro-average is preferable if you suspect there might be class imbalance. I did have a relatively high micro-average compared to the rest of the curves, so it’s possible that this model can be improved.
 
-
-
+<br>
+<p align="center" width="100%">
+<kbd><img src="figures/roc-prec-recall-curves.png" width="700"  /></kbd>
+</p>
+<p align="center"><i><sub><b>Figure 11:</b> Plots showing the ROC curves and Precision-Recall curves of my best performing logistic regression classification model.
+</sub></i></p>
+<br>
 
 # 7. Limitations
 

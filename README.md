@@ -4,30 +4,29 @@ This project was completed as part of the General Assembly Data Science Immersiv
 
 # Table of Contents
 
-- [Background](#background)<br>
-- [Problem Statement](#problem-statement)<br>
-- [Goals](#goals)<br>
-- [Data](#data)<br>
-  - [Data Acquisition](##data-acquisition)<br>
-  - [Data Cleaning](##data-cleaning)<br>
-  - [EDA](##eda)<br>
-- [Approach to Modeling](#approach-to-modeling)<br>
-- [Modeling](#modeling)<br>
-  - [Results](##results)<br>
-  - [Evaluation](##evaluation)<br> 
-- [Limitations](#limitations)<br>
-- [Conclusions](#conclusions)<br>
-- [Further Work](#further-work)<br>
-- [Libraries Used](#identifying-further-work)<br>
-- [Key Learnings and Challenges](#key-learnings-and-challenges)<br>
-- [Contact](#contact)<br>
+- [Background](#1-background)<br>
+- [Problem Statement](#2-problem-statement)<br>
+- [Goals](#3-goals)<br>
+- [Data](#4-data)<br>
+  - [Data Acquisition](#41-data-acquisition)<br>
+  - [Data Cleaning](#42-data-cleaning)<br>
+  - [EDA](#43-eda)<br>
+- [Approach to Modeling](#5-approach-to-modeling)<br>
+- [Modeling](#6-modeling)<br>
+  - [Results](#61-results)<br>
+  - [Evaluation](#62-evaluation)<br> 
+- [Limitations](#7-limitations)<br>
+- [Conclusions](#8-conclusions)<br>
+- [Further Work](#9-further-work)<br>
+- [Libraries Used](#10-libraries-used)<br>
+- [Contact](#11-contact)<br>
 
-# Background
+# 1. Background
 
 Scientific research is done by individuals or teams of scientists and they write their research up and they submit it to be published in a peer-reviewed journal. This ensures that there is a chance to check no one’s method is flawed or results have been completely fabricated; more minds are generally better than one and as a scientist, your research really needs to stand up to scrutiny. This system is not perfect, there is bias all the way up the peer review ladder and career politics exists but another aspect that no scientist looks forward to is the time and tedium involved in the submission-revision-resubmission process, especially if you go around the loop a few times only to be ultimately rejected.
 
 
-# Problem Statement
+# 2. Problem Statement
 
 What is the problem here? It is hard to get published as a scientist and the process is time-consuming and expensive. 
 
@@ -35,7 +34,7 @@ It can cost in the hundreds of pounds to have your article peer reviewed and the
 
 
 
-# Goals
+# 3. Goals
 
 My goals were to build a tool that could tell you which journal or journals you should submit your manuscripts to. This would hopefully save scientists time and money. I was hoping to achieve this by using a classification model to predict the most suitable journal for submission. Now is a good time to mention that I was naive to think that I could achieve this goal with my data, the story of this project is one of compromise. Problems will be discussed, however it is appropriate to mention that my main goal required shifting; I decided I wanted to see if it was possible to use my data to train a classification model on manuscript data to predict the scientific field that a manuscript belongs to.
 
@@ -44,9 +43,9 @@ Specifically, my goal is to be able to train a model that can predict an article
 I still wanted to build a tool that scientists could use to tailor their peer-review process, I just changed tack and said “if I can train this model to classify scientific articles into their respective scientific field, I’ll then try to make a set of models, each one aiming to classify more precisely which journal within a scientific field a manuscript belongs in”. 
 
 
-# Data
+# 4. Data
 
-## 3.1. Data Acquisition
+## 4.1. Data Acquisition
 
 My data was sourced by web scraping https://pubmed.ncbi.nlm.nih.gov/. This site hosts a large database of scientific articles with a focus on medicine (and to a lesser extent, biology). I chose this site for a few reasons. Firstly, it was easy to scrape, I didn’t trigger any anti-scraping protocols and it was easily iterated through in a loop by simply incrementing an article number after the “.gov/” . Secondly, it had a lot of meta-information like tags and actually had the article abstract in plain text HTML instead of a picture, or slideshow which wasn’t possible to parse through.
 
@@ -64,16 +63,16 @@ I still had severe class imbalance, I mentioned this database focussed on medici
 
 I attempted to deal with my class imbalance in a few ways. I attempted to use SMOTE to upsample minority classes, however I found that this ballooned the size of my dataset and resulted in models that took infeasible amounts of time to run. I also was running into memory issues. I therefore decided to run models on a few versions of the dataset:
 
-Full data (untreated)
-Random under-sampling of majority classes
-Undersampling majority classes to frequency of minority class
+* Full data (untreated)
+* Random under-sampling of majority classes
+* Undersampling majority classes to frequency of minority class
 
 
 These were ultimately all unfruitful in terms of achieving my specific goal(s), however the full data set appeared to generate the most successful models, thus this was the dataset I tried to optimize my models on.
 
 
 
-## 3.2. Data Cleaning
+## 4.2. Data Cleaning
 
 Significant amounts of text processing using regex was required in cleaning the web scraped data. I have given one example below but the associated project notebook details every instance that regex is used as well as notation for whatever the regular expression captures.
 
@@ -81,7 +80,7 @@ Significant amounts of text processing using regex was required in cleaning the 
 
 Additional standard cleaning steps (e.g. backfilling missing values, dropping NAs etc.) were also undertaken and can be found in the project notebook file but do not warrant extended discussion.
 
-## 3.3. EDA
+## 4.3. EDA
 
 It was during the exploratory data analysis phase that I uncovered many of the problems with my dataset (i.e. too many unique labels, class imbalance once custom labels applied) so in this section I will focus only on the plots, but I will detail later the aspects of my approach that were influenced by what I discovered about the data during EDA because, to me, the way in which certain features of the data influence one’s approach is slightly more interesting and important than simply reporting those features.
 
@@ -91,7 +90,7 @@ These wordclouds use the size of the word to show the relative frequency of the 
 
 
 
-# Approach to modeling
+# 5. Approach to modeling
 
 The features I ended up using from my data were: Title, Abstract, Tags, Year of publication. I dummied the year which I extracted from the date column, as year was the only feature of date that was present in all data points. The other three predictors were text. This involved natural language processing or NLP, this involved vectorizing the text columns. I used TF-IDF vectorization as I wanted to account for the relative importance of words as well as the count (i.e. count vectorization, which I also tried implementing and performed worse than TF IDF vectorization).
 I would have liked to use author data as well as article type as predictors. For authors,t I was planning to use this to find the h-index of authors, which accounts for how much a researcher publishes and how much others use that work; it’s essentially an index of how good you are compared to your peers. This seemed like a really helpful predictor but conceptualizing the transformation of this feature of the data into a single feature (or uniform set of features across all rows) was incredibly difficult; no justification seemed to be without significant and obvious bias (against papers with lots of authors, for papers with one mentor and many students etc.) and I would be very open to ideas on how to use this data as a predictor of journal (or journal field).
@@ -100,9 +99,9 @@ For article type it was a case that there weren’t enough articles that actuall
 Ultimately the target labels I settled on were Medicine, Biology, Physics and Chemistry; this represents quite a reduction from over 10 thousand! As mentioned earlier, I have had to change the class label of one class originally termed ‘general_journal’. These are rather a special case because they had their own wiki list, they do publish non-specific scientific advancements, but almost all focus the minutiae of their activities on life sciences, which can be thought of basically as biology. I originally modeled on all 5 target labels but my first models were really overfitting on this category as you can see from this classification report.
 
 
-# Modeling
+# 6. Modeling
 
-## 5.1. Results
+## 6.1. Results
 
 These are the models I ran on my data:
 
@@ -134,7 +133,7 @@ I then used gridsearch methods to setup a range of hyperparameters to iterate th
 
 
 
-## 5.2. Evaluation
+## 6.2. Evaluation
 
 Ultimately, gridsearch methods to tune hyperparameters for my best model resulted in an accuracy of 0.548 (to 3.s.f.). This model was still unable to achieve an accuracy higher than baseline (0.550).
 
@@ -159,19 +158,19 @@ The precision-recall curves paint the same picture as the confusion matrix. The 
 
 
 
-# Limitations
+# 7. Limitations
 
 Concerning the integrity of the data I think there is low risk of leakage and bias - my data has medicine as the majority class but in truth the proportions of my classes somewhat mirror the number of journals in each field and the absolute amount of literature that gets published, so medicine just publishes more and faster than other fields. Leakage concerns arise in the custom labeling phase (i.e. phase one of feature engineering a custom label) as I simply do not know exactly what was being labeled in the procedural lookup phase. The second phase (manual lookup via googling journal name) holds relatively low risk of leakage and I can say more certainly that each journal was labeled correctly as I was doing it personally and I know the slightly less obvious ones simply took more time to deduce the appropriate label. 
 
 All data was sourced from the same place, no source of leakage or bias among the dataset from sourcing. I have tried different splits for train-test (50-50, 70-40, 80-20) and all seem unable to reach an accuracy of baseline, the most successful models are the ones that happen to learn to predict almost everything as the majority class and thus approaches baseline. 
 
-# Conclusions
+# 8. Conclusions
 
 Given that my models were unable to achieve an accuracy higher than baseline my conclusion is obvious: the data that I have cannot be used to answer the questions I have asked: Can we classify scientific articles into their respective domains? No.
 
 Why is this? I think personally that there is more difference in corpus composition within scientific fields than there is between them at the level of granularity to which I examined. I think the problem with this question is: you need loads of features (but then computing time and memory is an issue) and you risk overfitting. Even though it looked promising from the wordclouds, the absolute abundance, relative to the absolute number of words in the corpus, is a drop in the ocean. Surely, then, you have to only look at a few words, right? Unfortunately the result of that is underfitting - the model has no idea what to do with most of the data because the text features you train on simply don't exist in most data points; in a sense you trade off quantity for quality and I’m not sure either end of the trade-off accomplishes anything meaningful.
 
-# Further Work
+# 9. Further Work
 
 In future versions of this project, I would like to look at within-field journals and try to classify these. It would be more practical as a project if I was approached by an individual who could present a list of the journals they were thinking of sending their manuscript to, as then we could start with a dataset with only these journals as targets. This hopefully will demonstrate more nuance and difference in the corpus composition.
 
@@ -182,7 +181,7 @@ I’d also like to do the rest of the things I’ve mentioned, so using predicto
 I’d also like to try to use different packages to accomplish the same goals and see if this influences the performance of my best model. I think I missed a trick in that I didn’t apply a log transformation to my data. This revelation came after watching a presentation on another text-based ML project and I noticed that frequency of words used in a corpus tends to follow an exponential distribution, with the most common words being used orders of magnitude more than the less commonly occurring words. I would also like to try to use n grams in my TF-IDF vectorization; I think this could be especially rewarding when considering the nature of keyword tags, often the significance comes from words being next to each other. I also found a library, gensim, which is used to process text for ML and I would like to investigate the effects of using this instead of the vectorization capabilities built-into sklearn.
 
 
-# Libraries used
+# 10. Libraries used
 
 Web scraping
 requests
@@ -202,6 +201,6 @@ Scikitplot
 Seaborn
 WordCloud
 
-# Contact
+# 11. Contact
 
 If you found this project interesting or would like reach out, you can [find me on Linkedin](https://www.linkedin.com/in/ross-birkinshaw-102701215/).

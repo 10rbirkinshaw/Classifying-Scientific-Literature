@@ -183,23 +183,30 @@ I’d also like to try to use different packages to accomplish the same goals an
 
 # 10. Libraries used
 
-Web scraping
-requests
-BeautifulSoup
-Re
-Time
-Random
-Useful data wrangling
-Pandas
-NumPy
-Modeling and preprocessing
-SKLearn
-NLTK
-Data visualization
-Matplotlib
-Scikitplot
-Seaborn
-WordCloud
+<b>Web scraping</b>
+  
+  * requests
+  * BeautifulSoup
+  * Re
+  * Time
+  * Random
+  
+<b>Useful data wrangling</b>
+  
+  * Pandas
+  * NumPy
+
+<b>Modeling and preprocessing</b>
+
+  * SKLearn
+  * NLTK
+  
+<b>Data visualization</b>
+  
+  * Matplotlib
+  * Scikitplot
+  * Seaborn
+  * WordCloud
 
 # 11. Contact
 

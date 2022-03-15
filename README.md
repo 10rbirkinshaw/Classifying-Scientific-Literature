@@ -108,7 +108,7 @@ It was during the exploratory data analysis phase that I uncovered many of the p
 
 <br>
 <p align="center" width="100%">
-<kbd><img src="figures/wordlcouds.png" width="700"  /></kbd>
+<kbd><img src="figures/wordclouds.png" width="700"  /></kbd>
 </p>
 <p align="center"><i><sub><b>Figure 5:</b> Wordclouds showing the 100 most commonly occurring words in the abstracts of articles of different classes.
 </sub></i></p>

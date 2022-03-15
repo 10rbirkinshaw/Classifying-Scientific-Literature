@@ -1,6 +1,30 @@
+# Context
+
+This project was completed as part of the General Assembly Data Science Immersive course. I present here a comprehensive overview of the machine learning pipeline.
+
+# Table of Contents
+
+- [Background](#background)<br>
+- [Problem Statement](#problem-statement)<br>
+- [Goals](#goals)<br>
+- [Data](#data)<br>
+  - [Data Acquisition](#data-acquisition)<br>
+  - [Data Cleaning](#data-cleaning)<br>
+  - [EDA](#eda)<br>
+- [Approach to Modeling](#approach-to-modeling)<br>
+- [Modeling](#modeling)<br>
+  - [Results](#results)<br>
+  - [Evaluation](#evaluation)<br> 
+- [Limitations](#limitations)<br>
+- [Conclusions](#conclusions)<br>
+- [Further Work](#further-work)<br>
+- [Libraries Used](#identifying-further-work)<br>
+- [Key Learnings and Challenges](#key-learnings-and-challenges)<br>
+- [Contact](#contact)<br>
+
 # Background
 
-Scientific research is done by individuals or teams of scientists and they write their research up and they submit it to be published in a peer-reviewed journal. This ensures that there is a chance to check no one’s method is flawed or results have been completely fabricated; more minds are generally better than one and as a scientist, your research really needs to stand up to scrutiny.This system is not perfect, there is bias all the way up the peer review ladder and career politics exists but another aspect that no scientist looks forward to is the time and tedium involved in the submission-revision-resubmission process, especially if you go around the loop a few times only to be ultimately rejected.
+Scientific research is done by individuals or teams of scientists and they write their research up and they submit it to be published in a peer-reviewed journal. This ensures that there is a chance to check no one’s method is flawed or results have been completely fabricated; more minds are generally better than one and as a scientist, your research really needs to stand up to scrutiny. This system is not perfect, there is bias all the way up the peer review ladder and career politics exists but another aspect that no scientist looks forward to is the time and tedium involved in the submission-revision-resubmission process, especially if you go around the loop a few times only to be ultimately rejected.
 
 
 # Problem Statement
@@ -180,4 +204,4 @@ WordCloud
 
 # Contact
 
-If you found this project interesting or would like reach out, you can find me on Linkedin
+If you found this project interesting or would like reach out, you can [find me on Linkedin](https://www.linkedin.com/in/ross-birkinshaw-102701215/).
